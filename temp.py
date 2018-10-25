@@ -118,9 +118,21 @@ for j in range(lista1sj[0], lista1ij[0]):
             lista2da.insert(len(lista2da),a)
             sol1p[i,j]=(255)
             break
-#Extremo derecho          
-sol1.show()
+        
+#============================================================================#
+#============================================================================#
+#======================ESTUDIANDO EL SOL EN EL RANGO=========================#
+#============================================================================#
+#============================================================================#
+#Analiza dentro del rango
+for i in range(0,lista1ij[0]-lista1sj[0]):
+    for j in range(lista2ii[i],lista2di[i]):
+        a=sol1.getpixel((i,j))
+        sol1p[j,i+lista1sj[0]]=(255)
 
+
+         
+sol1.show()
 
 
         
