@@ -122,11 +122,11 @@ listava=[]#La lista que contendrá los valores de los pixeles
 listadif=[]#La lista que contendrá los valores de diferencia pixel a pixel
 listavai=[]#La lista de la coordenada de la fila
 listavaj=[]#La lista de la coordenada de la columna
-aaa=0
+aaa=0 #Variable para guardar valor anterior
 #Analiza dentro del rango
-for i in range(80,lista1ij[0]-lista1sj[0]):
-    for j in range(lista2ii[i],lista2di[i]):
-        aa=sol1.getpixel((j,i+lista1sj[0]))
+for i in range(80,lista1ij[0]-lista1sj[0]): #Los valores 'item' a tomar dentro de las listas
+    for j in range(lista2ii[i],lista2di[i]): #Del valor izquierdo al derecho
+        aa=sol1.getpixel((j,i+lista1sj[0])) #Da el valor para el pixel. Añade tantos pixeles como se hayan quitado mediante lista1sj
         listava.insert(len(listava),aa)
         if aa-aaa<40:
             listadif.insert(len(listadif),abs(aa-aaa))
