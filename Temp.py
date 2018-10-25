@@ -123,8 +123,9 @@ listadif=[]#La lista que contendrá los valores de diferencia pixel a pixel
 listavai=[]#La lista de la coordenada de la fila
 listavaj=[]#La lista de la coordenada de la columna
 aaa=0 #Variable para guardar valor anterior
+aap=100 #Variable para determinar el valor en una parte.
 #Analiza dentro del rango
-for i in range(80,lista1ij[0]-lista1sj[0]): #Los valores 'item' a tomar dentro de las listas
+for i in range(0,lista1ij[0]-lista1sj[0]): #Los valores 'item' a tomar dentro de las listas 
     for j in range(lista2ii[i],lista2di[i]): #Del valor izquierdo al derecho
         aa=sol1.getpixel((j,i+lista1sj[0])) #Da el valor para el pixel. Añade tantos pixeles como se hayan quitado mediante lista1sj
         listava.insert(len(listava),aa)
@@ -136,8 +137,15 @@ for i in range(80,lista1ij[0]-lista1sj[0]): #Los valores 'item' a tomar dentro d
 promdif=m(listadif)
 listaficti=[1,2,3]
 vallistaficti=m(listaficti)
+#con partesol1=sol1.crop(left, upper, right, lower) puedo recortar un rectángulo de la imagen y guardarlo
+#Propuesta
+for i in range(0,lista1ij[0]-lista1sj[0]):
+    for j in range(lista2ii[i],lista2di[i]):
+        aa=sol1.getpixel((j,i+lista1sj[0]))
+        if aa<umbral:
+            while aap<umbral:
+                aap=sol1.getpixel((j,i+lista1sj[0]))
 
-         
 sol1.show()
 
 
