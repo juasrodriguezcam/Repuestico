@@ -5,50 +5,14 @@ Editor de Spyder
 Este es un archivo temporal para el proyecto de astrofísica.
 """
 
-from PIL import Image, ImageOps
+from PIL import Image, ImageFilter
 
-"""
-sample=Image.open("sample.jpg")#Carga la imagen
-#sample.show()#La muestra
-
-ancho,alto=sample.size #Da el ancho y la altura
-
-pixelmap=sample.load() #Crea un mapa de pixeles
-pixel=pixelmap[0,0] #Obtiene el valor del primer pixel
-print(pixel) 
-pixelmap[0,0]=(0,0,0) #Cambia el valor del primer pixel
-print(pixel)
-
-ancho, alto=sample.size
-
-listai=[]
-listaj=[]
-
-#for i in range(sample.size[0]):
-    #for j in range(sample.size[1]):
-        #pixel=pixelmap[i,j]
-        #if pixel==(0,0,0):
-        
-for i in range(1296):
-    for j in range(10):
-        pixelmap[j,i]=(0,0,0)
-for i in range(2000):
-    for j in range(10,20):
-        pixelmap[j,i]=(0,0,0)
-
-for i in range(20):
-    for j in range(alto):
-        if pixelmap[i,j]!=(0,0,0):
-            listai.insert(len(listai),i)
-            listaj.insert(len(listai),j)
-            break
-
-        
-sample.show()
-"""
 sol1=Image.open("sol1.jpg")  
-sol1=ImageOps.autocontrast(sol1)
-#sol1=ImageOps.autocontrast(sol1)
+sol1c=sol1.copy() #Para no modificar la imagen original
+sol1min=sol1c.filter(ImageFilter.MinFilter) #De una matriz 3x3 toma el valor más bajo
+bordes=sol1c.filter(ImageFilter.MedianFilter)
+bordes=bordes.filter(ImageFilter.RankFilter(3,8))
+bordes=bordes.filter(ImageFilter.SHARPEN)
 sol1p=sol1.load()
 ancho, alto=sol1.size
 
@@ -68,12 +32,23 @@ lista2ia=[]
 lista2di=[]
 lista2dj=[]
 lista2da=[]
-umbral=40
+"""
+#Busca el promedio de toda la imagen
+colores=sol1.getcolors()
+suma=0
+cuenta=0
+for i in range(len(colores)):
+    mult=colores[i][0]*colores[i][1] #Multiplica la cantidad de pixeles por el color
+    cuenta=colores[i][0]+cuenta #Suma estos valores multiplicados
+    suma=suma+mult #Cuenta los pixeles
+umbral=int(suma/cuenta) #Se toma el promedio como umbral
+"""
+umbral=0
 #Decide el rango en el cual se encuentra el sol
 #Extremo superior
 for j in range(ancho):
     for i in range(256):
-        b=sol1.getpixel((i,j))
+        b=sol1min.getpixel((i,j))
         if b>umbral:
             lista1si.insert(len(lista1si),i)
             lista1sj.insert(len(lista1sj),j)
@@ -82,8 +57,8 @@ for j in range(ancho):
         break
 #Extremo inferior
 for j in range(ancho)[::-1]:
-    for i in range(256,512)[::-1]: #Se define así para evitar conflicto con los créditos
-        b=sol1.getpixel((i,j))
+    for i in range(256,ancho)[::-1]: #Se define así para evitar conflicto con los créditos
+        b=sol1min.getpixel((i,j))
         if b>umbral:
             lista1ii.insert(len(lista1ii),i)
             lista1ij.insert(len(lista1ij),j)
@@ -92,12 +67,12 @@ for j in range(ancho)[::-1]:
         break
 #Extremo izquierdo
 for j in range(lista1sj[0], lista1ij[0]):
-    for i in range(alto):
+    for i in range(ancho):
         #if pixelmap[i,j]!=(0,0,0):
         #    listai.insert(len(listai),i)
         #    listaj.insert(len(listai),j)
         #    break        
-        a=sol1.getpixel((i,j))
+        a=sol1min.getpixel((i,j))
         if a>umbral:
             lista2ii.insert(len(lista2ii),i)
             lista2ij.insert(len(lista2ij),j)
@@ -106,12 +81,12 @@ for j in range(lista1sj[0], lista1ij[0]):
             break
 #Extremo derecho
 for j in range(lista1sj[0], lista1ij[0]):
-    for i in range(alto)[::-1]:
+    for i in range(ancho)[::-1]:
         #if pixelmap[i,j]!=(0,0,0):
         #    listai.insert(len(listai),i)
         #    listaj.insert(len(listai),j)
         #    break        
-        a=sol1.getpixel((i,j))
+        a=sol1min.getpixel((i,j))
         if a>umbral:
             lista2di.insert(len(lista2di),i)
             lista2dj.insert(len(lista2dj),j)
@@ -124,15 +99,27 @@ for j in range(lista1sj[0], lista1ij[0]):
 #======================ESTUDIANDO EL SOL EN EL RANGO=========================#
 #============================================================================#
 #============================================================================#
+#Declaro las nuevas listas
+listava=[]
+listavai=[]
+listavaj=[]
 #Analiza dentro del rango
+#Convierte los pixeles con valor mayor al umbral en pixeles negros
+#Esto permite usar crop y bbox para delimitar las regiones.
+
 for i in range(0,lista1ij[0]-lista1sj[0]):
-    for j in range(lista2ii[i],lista2di[i]):
-        a=sol1.getpixel((i,j))
-        sol1p[j,i+lista1sj[0]]=(255)
+    for j in range(lista2ii[i],lista2di[i]+1):
+        aa=sol1.getpixel((j,i+lista1sj[0]))
+        if aa>umbral:
+           listava.insert(len(listava),aa)
+           listavai.insert(len(listavai),i)
+           listavaj.insert(len(listavaj),j)
+           #sol1p[j,i+lista1sj[0]]=(0)
 
 
-         
-sol1.show()
+#sol1min.show()
+bordes.show()
+#sol1.show()
 
 
         
