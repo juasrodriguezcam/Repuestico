@@ -5,14 +5,26 @@ Editor de Spyder
 Este es un archivo temporal para el proyecto de astrofísica.
 """
 
-from PIL import Image, ImageFilter
+from PIL import Image, ImageFilter, ImageStat
+import numpy
+import imageio
+from scipy import ndimage
+
+im = imageio.imread('sol1.jpg')
+im = im.astype('int32')
+dx = ndimage.sobel(im, 1)  # horizontal derivative
+dy = ndimage.sobel(im, 0)  # vertical derivative
+mag = numpy.hypot(dx, dy)  # magnitude
+mag *= 255.0 / numpy.max(mag)  # normalize (Q&D)
+mag=mag.astype(numpy.uint8)
+imageio.imwrite('sobel.jpg', mag)
 
 sol1=Image.open("sol1.jpg")  
 sol1c=sol1.copy() #Para no modificar la imagen original
 sol1min=sol1c.filter(ImageFilter.MinFilter) #De una matriz 3x3 toma el valor más bajo
-bordes=sol1c.filter(ImageFilter.MedianFilter)
-bordes=bordes.filter(ImageFilter.RankFilter(3,8))
-bordes=bordes.filter(ImageFilter.SHARPEN)
+#bordes=sol1c.filter(ImageFilter.MedianFilter)
+#bordes=bordes.filter(ImageFilter.RankFilter(3,8))
+#bordes=bordes.filter(ImageFilter.SHARPEN)
 sol1p=sol1.load()
 ancho, alto=sol1.size
 
@@ -106,21 +118,28 @@ listavaj=[]
 #Analiza dentro del rango
 #Convierte los pixeles con valor mayor al umbral en pixeles negros
 #Esto permite usar crop y bbox para delimitar las regiones.
+sobel=Image.open("sobel.jpg")
+#sobel=sobel.filter(ImageFilter.MedianFilter)
 
 for i in range(0,lista1ij[0]-lista1sj[0]):
-    for j in range(lista2ii[i],lista2di[i]+1):
-        aa=sol1.getpixel((j,i+lista1sj[0]))
+    listava.insert(i,[])
+    for j in range(lista2ii[i]+1,lista2di[i]-1):
+        aa=sobel.getpixel((j,i+lista1sj[0]))
         if aa>umbral:
-           listava.insert(len(listava),aa)
-           listavai.insert(len(listavai),i)
-           listavaj.insert(len(listavaj),j)
+            listava[i].insert(len(listava[i]),aa)
+            listavai.insert(len(listavai),i)
+            listavaj.insert(len(listavaj),j)
            #sol1p[j,i+lista1sj[0]]=(0)
 
+mag.Stat
+#sobelp=sobel.load()
+#sobelp[89,209]=(255)
+#sobel.show()
+#sobel=numpy.asarray(sobel)
 
 #sol1min.show()
-bordes.show()
+#bordes.show()
 #sol1.show()
-
 
         
         
